@@ -1,0 +1,41 @@
+{
+    "name": "egabor/composer-release-plugin",
+    "description": "Bump version number and make a release of git based SemVer projects with ease.",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gábor Egyed",
+            "email": "gabor.egyed@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^5.5.9|^7.0.8",
+        "composer-plugin-api": "^1.1"
+    },
+    "require-dev": {
+        "composer/composer": "^1.6",
+        "roave/security-advisories": "dev-master",
+        "symfony/phpunit-bridge": "^3.4",
+        "symfony/process": "^3.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "egabor\\Composer\\ReleasePlugin\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "egabor\\Composer\\ReleasePlugin\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "class": "egabor\\Composer\\ReleasePlugin\\ReleasePlugin"
+    }
+}

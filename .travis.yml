@@ -1,0 +1,95 @@
+language: php
+sudo: false
+
+before_install:
+    - |
+        if [ "x$COVERAGE" != "xyes" ]; then
+            mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || true
+        fi
+
+install:
+    - composer install
+
+
+before_script:
+    - |
+        if [ "x$COVERAGE" == "xyes" ] && [[ ! $(php -m | grep -si xdebug) ]]; then
+            echo "xdebug is required for coverage"
+            exit 1
+        fi
+
+after_script:
+    - |
+        if [ "x$COVERAGE" == "xyes" ]; then
+            wget https://scrutinizer-ci.com/ocular.phar
+            php ocular.phar code-coverage:upload --format=php-clover clover.xml
+        fi
+
+# see https://github.com/travis-ci/travis-ci/issues/4942#issuecomment-159132444
+git:
+    depth: 1
+
+jobs:
+    allow_failures:
+        - php: nightly
+
+    include:
+        -
+            stage: Test
+            php: 5.5
+            install: composer update --prefer-lowest --prefer-stable
+            script: vendor/bin/simple-phpunit
+
+        -
+            stage: Test
+            php: 7.2
+            script: vendor/bin/simple-phpunit
+
+        -
+            stage: Test
+            php: nightly
+            script: vendor/bin/simple-phpunit
+
+        -
+            stage: Test
+            php: 7.2
+            env: COVERAGE=yes
+            script: vendor/bin/simple-phpunit --coverage-text --coverage-clover=clover.xml
+
+        -
+            stage: Test
+            php: 7.2
+            env: MUTATION
+            before_script:
+                - wget https://phar.phpunit.de/phpunit-6.phar -O phpunit.phar
+                - chmod +x phpunit.phar
+                - wget https://github.com/infection/infection/releases/download/0.8.2/infection.phar
+                - wget https://github.com/infection/infection/releases/download/0.8.2/infection.phar.pubkey
+                - chmod +x infection.phar
+            script: ./infection.phar --min-msi=48 --threads=4
+
+        -
+            stage: Code Quality
+            php: 7.2
+            env: STATIC_ANALYSIS
+            before_script:
+                - wget https://github.com/phpstan/phpstan/releases/download/0.9.2/phpstan.phar
+                - wget https://github.com/phpstan/phpstan/releases/download/0.9.2/phpstan.phar.asc
+                - chmod +x phpstan.phar
+                - vendor/bin/simple-phpunit --version # installs phpunit
+            script: ./phpstan.phar analyse -c phpstan.neon --level=7 src tests
+
+        -
+            stage: Code Quality
+            php: 7.2
+            env: CODING_STANDARDS
+            before_script:
+                - wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer
+                - chmod +x php-cs-fixer
+                - ./php-cs-fixer --version
+            script: ./php-cs-fixer fix --diff --dry-run
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+

@@ -1,0 +1,11 @@
+# do not include them in the tarball export
+.* export-ignore
+infection.json.dist export-ignore
+phpunit.xml.dist export-ignore
+tests export-ignore
+
+# normalize line endings in the repository
+* text=auto
+
+# better diff hunk-header
+*.php diff=php
