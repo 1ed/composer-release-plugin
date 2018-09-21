@@ -35,7 +35,7 @@ composer release --help
 
 There are some configuration options:
 ```
-use-prefix: use 'v' to prefix the release version number (default: false)
+use-prefix: use 'v' to prefix the release version number (default: true)
 release-branch: name of the branch where the releases originated from (default: master)
 ```
 These options can be set in the project's composer.json file, under the `extra.egabor-release` key, like:
@@ -49,7 +49,7 @@ These options can be set in the project's composer.json file, under the `extra.e
     "extra": {
         "egabor-release": {
             "release-branch": "release",
-            "use-prefix": true
+            "use-prefix": false
         }
     }
 }

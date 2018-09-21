@@ -21,7 +21,7 @@ final class Config
     {
         $extra = $package->getExtra();
         $this->config = array_replace([
-            'use-prefix' => false,
+            'use-prefix' => true,
             'release-branch' => 'master',
         ], isset($extra['egabor-release']) ? $extra['egabor-release'] : []);
     }

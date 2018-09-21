@@ -23,7 +23,7 @@ final class ConfigTest extends TestCase
     {
         $config = $this->createConfig();
 
-        $this->assertFalse($config->shouldUsePrefix());
+        $this->assertTrue($config->shouldUsePrefix());
         $this->assertSame('master', $config->getReleaseBranch());
     }
 
@@ -32,12 +32,12 @@ final class ConfigTest extends TestCase
     {
         $config = $this->createConfig([
             'egabor-release' => [
-                'use-prefix' => true,
+                'use-prefix' => false,
                 'release-branch' => 'develop',
             ],
         ]);
 
-        $this->assertTrue($config->shouldUsePrefix());
+        $this->assertFalse($config->shouldUsePrefix());
         $this->assertSame('develop', $config->getReleaseBranch());
     }
 
